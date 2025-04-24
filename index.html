@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ordena tu pedido</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #d32f2f;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #d32f2f;
+    }
+
+    .total, .price {
+      text-align: center;
+      margin: 10px 0;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    button {
+      background: #d32f2f;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #b71c1c;
+    }
+
+    .spin-btn {
+      background: #388e3c;
+    }
+
+    .spin-btn:hover {
+      background: #2e7d32;
+    }
+
+    .disabled {
+      background: grey !important;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Ordena tu pedido</h2>
+    <form id="orderForm">
+      <input type="text" id="name" placeholder="Tu nombre" required>
+      <input type="text" id="address" placeholder="Dirección" required>
+      <input type="number" id="kilos" placeholder="¿Cuántos kilos quieres?" required min="0.1" step="0.01">
+
+      <button type="button" class="spin-btn" id="spinDiscount">🎁 ¡Gira para tu descuento!</button>
+      <div class="price" id="pricePerKiloText">Precio por kilo: $--</div>
+
+      <div class="total" id="totalText">Total: $0 MXN</div>
+      <button type="submit">Enviar por WhatsApp</button>
+    </form>
+  </div>
+
+  <script>
+    const kilosInput = document.getElementById('kilos');
+    const totalText = document.getElementById('totalText');
+    const pricePerKiloText = document.getElementById('pricePerKiloText');
+    const form = document.getElementById('orderForm');
+    const spinBtn = document.getElementById('spinDiscount');
+    const phoneNumber = "5217721267582";
+
+    let pricePerKilo = 23;
+    let hasSpun = false;
+
+    function updateTotal() {
+      const kilos = parseFloat(kilosInput.value);
+      const total = isNaN(kilos) ? 0 : kilos * pricePerKilo;
+      totalText.textContent = `Total: $${total.toFixed(2)} MXN`;
+    }
+
+    kilosInput.addEventListener('input', updateTotal);
+
+    spinBtn.addEventListener('click', () => {
+      if (hasSpun) {
+        alert("¡Ya usaste tu oportunidad!");
+        return;
+      }
+
+      const chance = Math.random();
+
+      if (chance <= 0.1) {
+        pricePerKilo = 21.00;
+      } else if (chance <= 0.2) {
+        const options = [21.5, 22.0, 22.5];
+        pricePerKilo = options[Math.floor(Math.random() * options.length)];
+      } else {
+        pricePerKilo = 23.00;
+      }
+
+      pricePerKiloText.textContent = `Precio por kilo: $${pricePerKilo.toFixed(2)} MXN`;
+      updateTotal();
+
+      hasSpun = true;
+      spinBtn.classList.add('disabled');
+      spinBtn.disabled = true;
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const kilos = parseFloat(document.getElementById('kilos').value);
+      const total = kilos * pricePerKilo;
+
+      const message = `Hola! Soy ${name}. Quiero pedir ${kilos} kilos.\nPrecio por kilo: $${pricePerKilo.toFixed(2)}\nTotal: $${total.toFixed(2)} MXN.\nMi dirección es: ${address}`;
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+      window.open(whatsappURL, '_blank');
+    });
+  </script>
+</body>
+</html>
