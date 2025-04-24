@@ -2,146 +2,350 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ordena tu pedido</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <title>Ordena Fácil</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      padding: 20px;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f9f9f9; color: #333; }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background: #1e2a41;
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .icon-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 8px;
+  }
+    .icon-btn {
+    background: gray;
+    border: none;
+    color: #3040a591;
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+    .icon-btn:hover {
+    color: #fefefe;
+    
+  }
+
+    .cart-controls .icon-btn {
+      background: #ccc;
+      color: #333;
+      font-size: 12px;
+      width: 28px;
+      height: 28px;
     }
 
-    .container {
-      max-width: 400px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    .cart-controls .icon-btn:hover {
+      background: #999;
     }
 
-    h2 {
-      text-align: center;
-      color: #d32f2f;
-    }
-
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-
-    input:focus {
-      outline: none;
-      border-color: #d32f2f;
-    }
-
-    .total, .price {
-      text-align: center;
-      margin: 10px 0;
-      font-weight: bold;
-      font-size: 1.2em;
-    }
-
-    button {
-      background: #d32f2f;
-      color: white;
+    .product-card button {
+      margin-top: 8px;
       border: none;
+      background: none;
+      padding: 0;
+    }
+
+    .desc-btn {
+      margin-top: 5px;
+      font-size: 12px;
+      color: #888;
+      cursor: pointer;
+      background: none;
+      border: none;
+      text-decoration: underline;
+    }
+
+    .product-desc {
+    display: none;
+    font-size: 13px;
+    color: #666;
+    margin-top: 5px;
+    text-align: center;
+  }
+
+    .desc-visible {
+      display: block;
+    }
+    .cart-icon {
+      position: relative;
       cursor: pointer;
     }
 
-    button:hover {
-      background: #b71c1c;
+    .cart-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #fff;
+      color: #d32f2f;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 12px;
+      font-weight: bold;
     }
 
-    .spin-btn {
+    .container {
+      padding: 15px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .product-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .product-card {
+      background: #fff;
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .product-card button {
+      margin-top: 10px;
+      background: #2b3257;
+      color: white;
+      border: none;
+      padding: 8px;
+      border-radius: 6px;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    #cartModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    #cartModalContent {
+      background: #fff;
+      padding: 20px;
+      width: 100%;
+      max-width: 600px;
+      border-radius: 0;
+      height: 100%;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    #closeCart {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #d32f2f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      z-index: 100;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .cart-item span {
+      flex: 1;
+    }
+
+    .cart-controls button {
+      background: #bbb;
+      border: none;
+      padding: 4px 8px;
+      margin: 0 2px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #confirmOrder {
       background: #388e3c;
-    }
-
-    .spin-btn:hover {
-      background: #2e7d32;
-    }
-
-    .disabled {
-      background: grey !important;
-      cursor: not-allowed;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 6px;
+      margin-top: 15px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
+  <header>
+    <h2>Ordena Fácil</h2>
+    <div class="cart-icon" onclick="toggleCart()">
+      🛒<span class="cart-count" id="cartCount">0</span>
+    </div>
+  </header>
+
   <div class="container">
-    <h2>Ordena tu pedido</h2>
-    <form id="orderForm">
-      <input type="text" id="name" placeholder="Tu nombre" required>
-      <input type="text" id="address" placeholder="Dirección" required>
-      <input type="number" id="kilos" placeholder="¿Cuántos kilos quieres?" required min="0.1" step="0.01">
+    <div class="product-list" id="productList"></div>
+  </div>
 
-      <button type="button" class="spin-btn" id="spinDiscount">🎁 ¡Gira para tu descuento!</button>
-      <div class="price" id="pricePerKiloText">Precio por kilo: $--</div>
-
-      <div class="total" id="totalText">Total: $0 MXN</div>
-      <button type="submit">Enviar por WhatsApp</button>
-    </form>
+  <div id="cartModal">
+    <div id="cartModalContent">
+      <button id="closeCart" onclick="toggleCart()">Cerrar</button>
+      <div id="cartItems"></div>
+      <p style="text-align: right; font-weight: bold; margin-top: 10px;">Total: $<span id="cartTotal">0.00</span></p>
+      <button id="confirmOrder" onclick="sendOrder()">Confirmar y Enviar</button>
+    </div>
   </div>
 
   <script>
-    const kilosInput = document.getElementById('kilos');
-    const totalText = document.getElementById('totalText');
-    const pricePerKiloText = document.getElementById('pricePerKiloText');
-    const form = document.getElementById('orderForm');
-    const spinBtn = document.getElementById('spinDiscount');
-    const phoneNumber = "5217721267582";
+const products = [
+  { name: 'Chilaquiles', price: 25, image: 'https://www.isabeleats.com/wp-content/uploads/2020/11/chilaquiles-verdes-small-7.jpg', description: 'Orden de chilaquiles verdes con queso y crema.' },
+  { name: 'Tacos Dorados', price: 25, image: 'https://www.cocinavital.mx/wp-content/uploads/2017/08/tacos-dorados-papa-salsa-verde-e1542913822485.jpg', description: 'Orden con 3 tacos dorados rellenos de papa.' },
+  { name: 'Sopes', price: 20, image: 'https://mejorconsalud.as.com/wp-content/uploads/2020/12/plato-mexicano-sope-768x513.jpg', description: 'Orden de 2 sopes con frijoles, lechuga, queso y crema.' },
+  { name: 'Atol de Galleta', price: 15, image: 'https://i.pinimg.com/736x/4c/c5/6b/4cc56b5588aa0dfe6673c988cfe17b26.jpg', description: 'Vaso de atole caliente sabor galleta.' },
+  { name: 'Cafecito', price: 10, image: 'https://http2.mlstatic.com/D_NQ_NP_778038-MLM75403736991_032024-O-vaso-de-papel-para-cafe-con-tapa-12oz-100-uds-cu.webp', description: 'Café negro o con leche, recién hecho.' },
+  { name: 'Agua de Sabor', price: 15, image: 'https://i.blogs.es/264ec5/como-hacer-agua-de-horchata-arroz-2-/650_1200.jpg', description: 'Vaso de agua fresca de sabor (horchata, jamaica o limón).' },
+];
 
-    let pricePerKilo = 23;
-    let hasSpun = false;
+    let cart = {};
 
-    function updateTotal() {
-      const kilos = parseFloat(kilosInput.value);
-      const total = isNaN(kilos) ? 0 : kilos * pricePerKilo;
-      totalText.textContent = `Total: $${total.toFixed(2)} MXN`;
+    function renderProducts() {
+  const productList = document.getElementById('productList');
+  productList.innerHTML = '';
+  products.forEach((product, index) => {
+    const id = `desc-${index}`;
+    productList.innerHTML += `
+  <div class="product-card">
+    <img src="${product.image}" alt="${product.name}">
+    <h4>${product.name}</h4>
+    <p>$${product.price}</p>
+    
+    <div class="icon-actions">
+      <button class="icon-btn" onclick="addToCart(${index})" title="Agregar al carrito">
+        <i class="fas fa-cart-plus"></i>
+      </button>
+      <button class="icon-btn" onclick="toggleDescription(this)" title="Ver descripción">
+        <i class="fas fa-eye"></i>
+      </button>
+    </div>
+
+    <p class="product-desc">${product.description}</p>
+  </div>
+`;
+
+
+  });
+}
+
+    function addToCart(index) {
+      const product = products[index];
+      if (cart[product.name]) {
+        cart[product.name].quantity += 1;
+      } else {
+        cart[product.name] = { price: product.price, quantity: 1 };
+      }
+      updateCartDisplay();
     }
 
-    kilosInput.addEventListener('input', updateTotal);
-
-    spinBtn.addEventListener('click', () => {
-      if (hasSpun) {
-        alert("¡Ya usaste tu oportunidad!");
-        return;
+    function decrementItem(name) {
+      if (cart[name]) {
+        cart[name].quantity -= 1;
+        if (cart[name].quantity <= 0) {
+          delete cart[name];
+        }
+        updateCartDisplay();
       }
+    }
 
-      const chance = Math.random();
+    function updateCartDisplay() {
+      const cartItems = document.getElementById('cartItems');
+      const cartCount = document.getElementById('cartCount');
+      const cartTotal = document.getElementById('cartTotal');
+      let total = 0;
+      let count = 0;
 
-      if (chance <= 0.1) {
-        pricePerKilo = 21.00;
-      } else if (chance <= 0.2) {
-        const options = [21.5, 22.0, 22.5];
-        pricePerKilo = options[Math.floor(Math.random() * options.length)];
-      } else {
-        pricePerKilo = 23.00;
+      cartItems.innerHTML = '';
+      for (let name in cart) {
+        const item = cart[name];
+        const itemTotal = item.price * item.quantity;
+        count += item.quantity;
+        total += itemTotal;
+
+        cartItems.innerHTML += `
+          <div class="cart-item">
+            <span>${name} x${item.quantity}</span>
+            <div class="cart-controls">
+              <button onclick="decrementItem('${name}')">-</button>
+              <button onclick="addToCart(${products.findIndex(p => p.name === name)})">+</button>
+            </div>
+            <span>$${itemTotal.toFixed(2)}</span>
+          </div>
+        `;
       }
+      cartCount.textContent = count;
+      cartTotal.textContent = total.toFixed(2);
+    }
 
-      pricePerKiloText.textContent = `Precio por kilo: $${pricePerKilo.toFixed(2)} MXN`;
-      updateTotal();
+    function toggleCart() {
+      const modal = document.getElementById('cartModal');
+      modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+    }
 
-      hasSpun = true;
-      spinBtn.classList.add('disabled');
-      spinBtn.disabled = true;
-    });
+    function sendOrder() {
+      const phoneNumber = '5217721267582';
+      const name = prompt('¿Cuál es tu nombre?');
+      const location = prompt('¿Dónde estás ubicado?');
+      if (!name || !location) return alert('Por favor completa tu nombre y ubicación.');
 
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('name').value.trim();
-      const address = document.getElementById('address').value.trim();
-      const kilos = parseFloat(document.getElementById('kilos').value);
-      const total = kilos * pricePerKilo;
+      let message = `Hola, soy ${name}, quiero pedir:\n`;
+      let total = 0;
+      for (let key in cart) {
+        let item = cart[key];
+        let itemTotal = item.price * item.quantity;
+        message += `- ${key} x${item.quantity} = $${itemTotal.toFixed(2)}\n`;
+        total += itemTotal;
+      }
+      message += `\nTotal: $${total.toFixed(2)}\nUbicación: ${location}`;
+      window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    }
 
-      const message = `Hola! Soy ${name}. Quiero pedir ${kilos} kilos.\nPrecio por kilo: $${pricePerKilo.toFixed(2)}\nTotal: $${total.toFixed(2)} MXN.\nMi dirección es: ${address}`;
-      const encodedMessage = encodeURIComponent(message);
-      const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-      window.open(whatsappURL, '_blank');
-    });
+    renderProducts();
   </script>
+  <script>
+function toggleDescription(btn) {
+  const desc = btn.nextElementSibling;
+  desc.classList.toggle('desc-visible');
+}
+
+    </script>
 </body>
 </html>
