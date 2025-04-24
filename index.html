@@ -341,10 +341,14 @@ const products = [
     renderProducts();
   </script>
   <script>
-function toggleDescription(btn) {
-  const desc = btn.nextElementSibling;
-  desc.classList.toggle('desc-visible');
+function toggleDescription(button) {
+  const card = button.closest('.product-card');
+  const desc = card.querySelector('.product-desc');
+  if (desc) {
+    desc.classList.toggle('desc-visible');
+  }
 }
+
 
     </script>
 </body>
